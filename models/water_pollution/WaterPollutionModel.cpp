@@ -21,7 +21,7 @@ double WaterPollutionModel::c(double y) { return -tanh((0.5 - y) / D); }
 
 void WaterPollutionModel::initParticles() {
   std::uniform_real_distribution<> ox(rect.x, rect.x + rect.w);
-  std::uniform_real_distribution<> oy(rect.y, rect.y + rect.h );
+  std::uniform_real_distribution<> water_oy(rect.y, rect.y + rect.h / 2);
   std::uniform_real_distribution<> dirt_oy(rect.y + rect.h / 2,
                                            rect.y + rect.h);
 

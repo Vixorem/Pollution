@@ -4,7 +4,7 @@
 
 class Canvas {
  public:
-  Canvas(const Window& window, int width, int height);
+  Canvas(const Window& window, int width, int height, int x = 0, int y = 0);
 
   void setColor(int r, int g, int b, int alpha = 255);
   void plot(int x, int y);

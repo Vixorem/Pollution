@@ -1,17 +1,18 @@
+#include "main.h"
+
 #include "core/Window.h"
 #include "models/water_pollution/WaterPollutionModel.h"
 #include "widgets/Canvas.h"
-#include "main.h"
 
 int main(int argc, char* args[]) {
   Window win(800, 400);
   WaterPollutionModel model(win);
   model.initParticles();
-  model.drawParticles();
+  model.draw();
   bool quit = false;
-
   SDL_Event e;
   bool enter_pushed = false;
+
   win.render();
   while (!quit) {
     while (SDL_PollEvent(&e) != 0) {
@@ -24,17 +25,17 @@ int main(int argc, char* args[]) {
       if (e.key.keysym.sym == SDLK_BACKSPACE) {
         enter_pushed = false;
         model.initParticles();
-        model.drawParticles();
+        model.draw();
       }
       if (e.key.keysym.sym == SDLK_SPACE) {
         enter_pushed = false;
         model.update();
-        model.drawParticles();
+        model.draw();
       }
     }
     if (enter_pushed) {
       model.update();
-      model.drawParticles();
+      model.draw();
     }
     win.render();
   }

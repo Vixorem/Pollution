@@ -3,7 +3,7 @@
 Window::Window(size_t width, size_t height, const std::string& title)
     : width_(width), height_(height) {
   // There's also SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
-  // function
+  // function to init both at the same time
 
   sdl_window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED,
                                  SDL_WINDOWPOS_UNDEFINED, width_, height_,

@@ -26,18 +26,25 @@ void WaterPollutionModel::initParticles() {
                                            rect.y + rect.h);
 
   dirt.clear();
-  mesh_nodes.clear();
-  mesh_mean_mass.resize(mesh_siz * mesh_siz);
+  mesh_nodes.resize(mesh_siz);
+  mesh_mean_mass.resize(mesh_siz);
+  for (auto& m : mesh_mean_mass) {
+    m.resize(mesh_siz);
+  }
+  for (auto& m : mesh_nodes) {
+    m.resize(mesh_siz);
+  }
   water.clear();
   dirt_mass_arr.clear();
   water_mass_arr.clear();
 
   // TODO: set red if they are above the tanh and blue if opposed
 
-  auto step = rect.w / static_cast<double>(mesh_siz - 1);
-  for (double i = rect.x; i <= rect.x + rect.w; i += step) {
-    for (double j = rect.y; j <= rect.y + rect.h; j += step) {
-      mesh_nodes.emplace_back(std::make_pair(i, j));
+  auto step = rect.w / static_cast<double>(mesh_siz);
+  for (int i = 0; i < mesh_siz; ++i) {
+    for (int j = 0; j < mesh_siz; ++j) {
+      mesh_nodes[i][j] =
+          std::make_pair(rect.x  + i * step, rect.y  + j * step);
     }
   }
 
@@ -64,7 +71,7 @@ void WaterPollutionModel::initParticles() {
 
 void WaterPollutionModel::draw() {
   drawParticles();
-  // drawGradients();
+  drawGradients();
 }
 
 void WaterPollutionModel::drawParticles() {
@@ -88,6 +95,17 @@ void WaterPollutionModel::drawParticles() {
   }
 }
 
+void WaterPollutionModel::drawGradients() {
+  auto length = gradient_canvas.w() / mesh_siz;
+  for (int i = 0; i < mesh_siz; ++i) {
+    for (int j = 0; j < mesh_siz; ++j) {
+      auto m = mesh_mean_mass[i][j];
+      gradient_canvas.setColor(255 * (100 - m) / 100, 0, 255 * m / 100);
+      gradient_canvas.square(i * length, j * length, length);
+    }
+  }
+}
+
 std::pair<int, int> WaterPollutionModel::toScreen(const Canvas& cnvs, double x,
                                                   double y) {
   auto w = cnvs.w();
@@ -95,40 +113,37 @@ std::pair<int, int> WaterPollutionModel::toScreen(const Canvas& cnvs, double x,
 
   auto scale_x = w / rect.w;
   auto scale_y = h / rect.h;
-  auto canv_height = particle_canvas.h();
 
-  return {x * scale_x - rect.x * scale_x,
-          canv_height - y * scale_y + rect.y * scale_y};
+  return {x * scale_x - rect.x * scale_x, h - y * scale_y + rect.y * scale_y};
 }
 
 void WaterPollutionModel::setGradientColors() {
   // Find a distantce to each particle
 
   auto total_siz = dirt_size + water_size;
-  for (int i = 0; i < mesh_nodes.size(); ++i) {
-    double sum = 0;
-    auto node = mesh_nodes[i];
-    for (int j = 0; j < dirt.size(); ++j) {
-      sum += (node.first - dirt[j].back().first) *
-                 (node.first - dirt[j].back().first) +
-             (node.second - dirt[j].back().second) *
-                 (node.second - dirt[j].back().second);
+
+  for (int i = 0; i < mesh_siz; ++i) {
+    for (int j = 0; j < mesh_siz; ++j) {
+      double sum = 0;
+      auto node = mesh_nodes[i][j];
+      for (int j = 0; j < dirt.size(); ++j) {
+        sum += dirt_mass_arr[j] +
+               pow(2, ((node.first - dirt[j].back().first) *
+                           (node.first - dirt[j].back().first) +
+                       (node.second - dirt[j].back().second) *
+                           (node.second - dirt[j].back().second)));
+      }
+      for (int j = 0; j < water.size(); ++j) {
+        sum -= water_mass_arr[j] +
+               pow(2, ((node.first - water[j].back().first) *
+                           (node.first - water[j].back().first) +
+                       (node.second - water[j].back().second) *
+                           (node.second - water[j].back().second)));
+      }
+      auto mean_dist = 1000 * sum / total_siz;
+      mesh_mean_mass[i][j] = mean_dist;
     }
-    for (int j = 0; j < water.size(); ++j) {
-      sum += (node.first - dirt[j].back().first) *
-                 (node.first - dirt[j].back().first) +
-             (node.second - dirt[j].back().second) *
-                 (node.second - dirt[j].back().second);
-    }
-    auto mean_dist = sum / total_siz;
-    mesh_mean_mass[i] = mean_dist;
   }
-
-  /* for (int i = 0; i < mesh_siz; ++i) {
-     for (int j = 0; j < mesh_siz; ++j) {
-
-     }
-   }*/
 }
 
 void WaterPollutionModel::update() {

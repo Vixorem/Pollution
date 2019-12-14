@@ -10,11 +10,20 @@ void Canvas::setColor(int r, int g, int b, int alpha) {
   SDL_SetRenderDrawColor(window_.getRenderer(), r, g, b, alpha);
 }
 
-void Canvas::plot(int x, int y) {
-  if (x <= width_ && x >= x_ && y <= height_ && y >= y_) {
+void Canvas::plot(int x, int y, int siz) {
+  if (x <= width_ && x >= 0 && y <= height_ && y >= 0) {
     // SDL_RenderDrawPoint(window_.getRenderer(), x, y);
-    auto siz = 4;
-    auto rect = SDL_Rect{x - siz / 2, y - siz / 2, siz, siz};
+    auto rect = SDL_Rect{x_ + x - siz / 2, y_ +  y - siz / 2, siz, siz};
+    SDL_RenderFillRect(window_.getRenderer(), &rect);
+    // SDL_RenderPresent(window_.getRenderer());
+  }
+}
+
+void Canvas::square(int x, int y, int siz) {
+
+    if (x <= width_ && x >= 0 && y <= height_ && y >= 0) {
+    // SDL_RenderDrawPoint(window_.getRenderer(), x, y);
+    auto rect = SDL_Rect{x_ + x , y_ + y, siz, siz};
     SDL_RenderFillRect(window_.getRenderer(), &rect);
     // SDL_RenderPresent(window_.getRenderer());
   }

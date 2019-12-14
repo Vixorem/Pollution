@@ -34,15 +34,15 @@ class WaterPollutionModel {
 
   // A piece of vector field we consider
   static constexpr Rectangle rect{0.25, 0.75, 0.5, 0.5};
-  static constexpr size_t phantom_plot_size = 30;
-  static constexpr size_t dirt_size = 200;
+  static constexpr size_t phantom_plot_size = 20;
+  static constexpr size_t dirt_size = 150;
   static constexpr size_t water_size = 200;
   static constexpr double delta = 0.001;
   static constexpr int mesh_siz =
-      50;  // it's supposed to be square so we've got the only one field for
+      40;  // it's supposed to be square so we've got the only one field for
             // dimensions
-  std::vector<std::pair<double, double>> mesh_nodes;
-  std::vector<double> mesh_mean_mass;
+  std::vector<std::vector<std::pair<double, double>>> mesh_nodes;
+  std::vector<std::vector<double>> mesh_mean_mass;
   std::random_device rd;
   std::mt19937 gen_{rd()};
   std::vector<t_phantoms> dirt;

@@ -97,10 +97,6 @@ int main(int argc, char* args[]) {
     /*auto s = saveScreenshotBMP("C:\\Users\\Victor\\Desktop\\Screenshots\\" +
                                    std::to_string(cnt) + ".bmp ",
                                win.getWindow(), win.getRenderer());*/
-    ++cnt;
-    if (cnt == 2400) {
-      return 0;
-    }
   }
   return 0;
 }

@@ -35,12 +35,12 @@ private:
     double c(double y);
 
     // A piece of vector field we consider
-    static constexpr Rectangle rect{ -0.25, -0.25, 1, 0.5 };
+    static constexpr Rectangle rect{ 0, 0, 1, 1 };
     static constexpr size_t phantom_plot_size = 4;
     static constexpr size_t size = 400;
     static constexpr double delta = 0.001;
     static constexpr int mesh_siz =
-        100;  // it's supposed to be square so we've got the only one field for
+        50;  // it's supposed to be square so we've got the only one field for
               // dimensions
     std::vector<std::vector<std::pair<double, double>>> mesh_nodes;
     std::vector<std::vector<double>> mesh_mean_mass;

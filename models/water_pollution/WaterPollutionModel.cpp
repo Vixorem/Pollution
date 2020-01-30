@@ -7,15 +7,17 @@ WaterPollutionModel::WaterPollutionModel(const Window& win)
     gradient_canvas(
         Canvas(win, win.getW() / 2, win.getH(), win.getW() / 2, 0)) {}
 
-double WaterPollutionModel::u(double x, double y) {
+double WaterPollutionModel::v(double x, double y) {
     return -2 * M_PI * sin(M_PI * y) * cos(2 * M_PI * x);
 }
 
-double WaterPollutionModel::v(double x, double y) {
+double WaterPollutionModel::u(double x, double y) {
     return M_PI * sin(2 * M_PI * x) * cos(M_PI * y);
 }
 
-double WaterPollutionModel::c(double x) { return -tanh((0.2 - x) / 2); }
+double WaterPollutionModel::c(double x) { return 0.5 -tanh((x - rect.w / 2) / 12); }
+
+
 
 void WaterPollutionModel::initParticles() {
     std::uniform_real_distribution<> ox(rect.x, rect.x + rect.w);
@@ -53,7 +55,9 @@ void WaterPollutionModel::initParticles() {
         else {
             mass_arr.emplace_back(100);
         }
+        //mass_arr.emplace_back(t);
     }
+
 }
 
 void WaterPollutionModel::draw() {
@@ -71,6 +75,7 @@ void WaterPollutionModel::drawParticles() {
             auto screen_point =
                 toScreen(particle_canvas, std::get<0>(j), std::get<1>(j));
             auto m = mass_arr[i];
+            //TODO: make it independent to m, just to use it as binary(0 or non-0)
             particle_canvas.setColor(255 * (100 - m) / 100, 0, 255 * m / 100);
             particle_canvas.plot(screen_point.first, screen_point.second);
         }
@@ -113,11 +118,12 @@ void WaterPollutionModel::setGradientColors() {
                     (node.second - particles[o].back().second));
 
                 if (!mass_arr[o]) {
-                    colsum1 += 5 / pow(3, 20 * dist);
+                    colsum1 += 5 / pow(3, 50 * dist);
                 }
                 else {
-                    colsum2 += 5 / pow(3, 20 * dist);
+                    colsum2 += 5 / pow(3, 50 * dist);
                 }
+
             }
             mesh_mean_mass[i][j] = colsum1 / (colsum1 + colsum2);
         }
